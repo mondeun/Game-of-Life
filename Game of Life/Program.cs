@@ -10,6 +10,8 @@ namespace Game_of_Life
     {
         static void Main(string[] args)
         {
+            Game game = new Game();
+            game.Run();
         }
     }
 }
