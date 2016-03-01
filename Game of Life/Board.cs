@@ -10,19 +10,20 @@ namespace Game_of_Life
     {
         private int[,] _board;
 
-        public static int Size => 100;
+        public int Width => 40;
+        public int Height => 10;
 
         public Board()
         {
-            _board = new int[Size,Size];
+            _board = new int[Width, Height];
             Initialize();
         }
 
         public void Initialize()
         {
-            for (int x = 0; x < _board.GetLength(0); x++)
+            for (int y = 0; y < _board.GetLength(1); y++)
             {
-                for (int y = 0; y < _board.GetLength(1); y++)
+                for (int x = 0; x < _board.GetLength(0); x++)
                 {
                     _board[x, y] = 0;
                 }
@@ -32,6 +33,18 @@ namespace Game_of_Life
         public int GetStateAt(int x, int y)
         {
             return _board[x, y];
+        }
+
+        public void DrawBoard()
+        {
+            for (int y = 0; y < _board.GetLength(1); y++)
+            {
+                for (int x = 0; x < _board.GetLength(0); x++)
+                {
+                    Console.Write(_board[x, y]);
+                }
+                Console.Write("\n");
+            }
         }
     }
 }
