@@ -16,18 +16,30 @@ namespace Game_of_Life
         };
 
         private State[,] _board;
+        private State[,] _lastBoardFrame;
         private Random _rand;
 
+        /// <summary>
+        /// Get board width
+        /// </summary>
         public int Width => 40;
+
+        /// <summary>
+        /// Get board height
+        /// </summary>
         public int Height => 20;
 
         public Board()
         {
             _board = new State[Width, Height];
+            _lastBoardFrame = new State[Width, Height];
             _rand = new Random();
             Initialize();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Initialize()
         {
             for (int y = 0; y < _board.GetLength(1); y++)
@@ -48,18 +60,38 @@ namespace Game_of_Life
             return _board[x, y];
         }
 
-        public void DrawBoard()
+        /// <summary>
+        /// Update the board and apply rules to the cells
+        /// </summary>
+        public void Update()
+        {
+            _lastBoardFrame = (State[,])_board.Clone();
+        }
+
+        /// <summary>
+        /// Draw the board the console
+        /// </summary>
+        public void Draw()
         {
             for (int y = 0; y < _board.GetLength(1); y++)
             {
                 for (int x = 0; x < _board.GetLength(0); x++)
                 {
-                    Console.Write(GetCharacterRepresentation(_board[x, y]));
+                    var piece = GetCharacterRepresentation(_board[x, y]);
+                    if(piece == '#')
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(piece);
                 }
                 Console.Write("\n");
             }
+            Console.ResetColor();
         }
 
+        /// <summary>
+        /// Translate a state to a character
+        /// </summary>
+        /// <param name="state">State to translate</param>
+        /// <returns>Character representation of state</returns>
         private char GetCharacterRepresentation(State state)
         {
             switch(state)
@@ -73,7 +105,13 @@ namespace Game_of_Life
             }
         }
 
-        private int Neighbours(int x, int y)
+        /// <summary>
+        /// Get the number of bordering neighbours that are in an alive state
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y Position</param>
+        /// <returns>Number of alive neighbours</returns>
+        private int CountNeighbours(int x, int y)
         {
             // quit if given positioning is bad
             if ((x < 0 && x >= _board.GetLength(1) ||
