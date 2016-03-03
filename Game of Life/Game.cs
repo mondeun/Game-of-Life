@@ -32,9 +32,11 @@ namespace Game_of_Life
             {
                 Console.Clear();
 
+                Console.WriteLine($"Gen: {_generation}\n");
                 _board.DrawBoard();
 
                 Console.ReadKey();
+                _generation++;
             }
         }
     }
