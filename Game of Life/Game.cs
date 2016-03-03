@@ -18,12 +18,9 @@ namespace Game_of_Life
             _frame = 0;
         }
 
-        public void Reset()
-        {
-            _board.Initialize();
-            _frame = 0;
-        }
-
+        /// <summary>
+        /// Update and draw the game
+        /// </summary>
         public void Run()
         {
             bool run = true;

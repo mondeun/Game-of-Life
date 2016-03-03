@@ -17,7 +17,7 @@ namespace Game_of_Life
 
         private State[,] _cell;
         private State[,] _lastCellFrame;
-        private Random _rand;
+        private readonly Random _rand;
 
         /// <summary>
         /// Get board width
@@ -42,9 +42,9 @@ namespace Game_of_Life
         /// </summary>
         public void Initialize()
         {
-            for (int y = 0; y < _cell.GetLength(1); y++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int x = 0; x < _cell.GetLength(0); x++)
+                for (int x = 0; x < Width; x++)
                 {
                     int tmp = _rand.Next(0, 2);
                     if(tmp == 0)
@@ -53,11 +53,6 @@ namespace Game_of_Life
                         _cell[x,y] = State.Alive;
                 }
             }
-        }
-
-        public State GetStateAt(int x, int y)
-        {
-            return _cell[x, y];
         }
 
         /// <summary>
@@ -98,9 +93,9 @@ namespace Game_of_Life
         /// </summary>
         public void Draw()
         {
-            for (int y = 0; y < _cell.GetLength(1); y++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int x = 0; x < _cell.GetLength(0); x++)
+                for (int x = 0; x < Width; x++)
                 {
                     var piece = GetCharacterRepresentation(_cell[x, y]);
                     if(piece == '#')
@@ -139,8 +134,8 @@ namespace Game_of_Life
         private int CountNeighbours(int x, int y)
         {
             // quit if given positioning is bad
-            if ((x < 0 && x >= _cell.GetLength(1) ||
-                 y < 0 && y >= _cell.GetLength(0)))
+            if (x < 0 && x >= Width ||
+                y < 0 && y >= Height)
             {
                 return -1;
             }
@@ -156,8 +151,8 @@ namespace Game_of_Life
                     var dy = y + j;
 
                     // Check bounds
-                    if (dx >= 0 && dx < _cell.GetLength(0) &&
-                        dy >= 0 && dy < _cell.GetLength(1))
+                    if (dx >= 0 && dx < Width &&
+                        dy >= 0 && dy < Height)
                     {
                         // Checks all neighbours without checking itself
                         if (dx != x || dy != y)
