@@ -15,8 +15,8 @@ namespace Game_of_Life
             Alive = 1
         };
 
-        private State[,] _board;
-        private State[,] _lastBoardFrame;
+        private State[,] _cell;
+        private State[,] _lastCellFrame;
         private Random _rand;
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace Game_of_Life
 
         public Board()
         {
-            _board = new State[Width, Height];
-            _lastBoardFrame = new State[Width, Height];
+            _cell = new State[Width, Height];
+            _lastCellFrame = new State[Width, Height];
             _rand = new Random();
             Initialize();
         }
@@ -42,22 +42,22 @@ namespace Game_of_Life
         /// </summary>
         public void Initialize()
         {
-            for (int y = 0; y < _board.GetLength(1); y++)
+            for (int y = 0; y < _cell.GetLength(1); y++)
             {
-                for (int x = 0; x < _board.GetLength(0); x++)
+                for (int x = 0; x < _cell.GetLength(0); x++)
                 {
                     int tmp = _rand.Next(0, 2);
                     if(tmp == 0)
-                        _board[x, y] = State.Dead;
+                        _cell[x, y] = State.Dead;
                     else
-                        _board[x,y] = State.Alive;
+                        _cell[x,y] = State.Alive;
                 }
             }
         }
 
         public State GetStateAt(int x, int y)
         {
-            return _board[x, y];
+            return _cell[x, y];
         }
 
         /// <summary>
@@ -65,7 +65,32 @@ namespace Game_of_Life
         /// </summary>
         public void Update()
         {
-            _lastBoardFrame = (State[,])_board.Clone();
+            // TODO Add handling of deceased and born cells
+            var tmpCells = (State[,])_cell.Clone();
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    var neighbours = CountNeighbours(x, y);
+
+                    if (tmpCells[x, y] == State.Alive)
+                    {
+                        if (neighbours < 2)
+                            tmpCells[x, y] = State.Dead;
+                        else if(neighbours > 3)
+                            tmpCells[x, y] = State.Dead;
+                        if (neighbours == 2 || neighbours == 3)
+                            tmpCells[x, y] = State.Alive;
+                    }
+                    else
+                    {
+                        if (neighbours == 3)
+                            tmpCells[x, y] = State.Alive;
+                    }
+                }
+            }
+            _cell = tmpCells;
         }
 
         /// <summary>
@@ -73,11 +98,11 @@ namespace Game_of_Life
         /// </summary>
         public void Draw()
         {
-            for (int y = 0; y < _board.GetLength(1); y++)
+            for (int y = 0; y < _cell.GetLength(1); y++)
             {
-                for (int x = 0; x < _board.GetLength(0); x++)
+                for (int x = 0; x < _cell.GetLength(0); x++)
                 {
-                    var piece = GetCharacterRepresentation(_board[x, y]);
+                    var piece = GetCharacterRepresentation(_cell[x, y]);
                     if(piece == '#')
                         Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(piece);
@@ -114,8 +139,8 @@ namespace Game_of_Life
         private int CountNeighbours(int x, int y)
         {
             // quit if given positioning is bad
-            if ((x < 0 && x >= _board.GetLength(1) ||
-                 y < 0 && y >= _board.GetLength(0)))
+            if ((x < 0 && x >= _cell.GetLength(1) ||
+                 y < 0 && y >= _cell.GetLength(0)))
             {
                 return -1;
             }
@@ -131,14 +156,14 @@ namespace Game_of_Life
                     var dy = y + j;
 
                     // Check bounds
-                    if (dx >= 0 && dx < _board.GetLength(0) &&
-                        dy >= 0 && dy < _board.GetLength(1))
+                    if (dx >= 0 && dx < _cell.GetLength(0) &&
+                        dy >= 0 && dy < _cell.GetLength(1))
                     {
                         // Checks all neighbours without checking itself
                         if (dx != x || dy != y)
                         {
                             // Add up if cell is alive
-                            if (_board[dx, dy] > 0)
+                            if (_cell[dx, dy] > 0)
                                 neighbours++;
                         }
                     }

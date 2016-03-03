@@ -38,7 +38,7 @@ namespace Game_of_Life
                 _board.Draw();
 
                 //Console.ReadKey();
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
                 _frame++;
             }
         }
