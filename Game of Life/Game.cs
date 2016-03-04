@@ -11,7 +11,7 @@ namespace Game_of_Life
         public Game()
         {
             _board = new Board();
-            _frame = 0;
+            _frame = 1;
         }
 
         /// <summary>
