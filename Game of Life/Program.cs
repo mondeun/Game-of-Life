@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game_of_Life
 {
@@ -10,8 +6,11 @@ namespace Game_of_Life
     {
         static void Main(string[] args)
         {
-            Game game = new Game();
-            game.Run();
+            Console.Title = "GAME OF LIFE";
+            Console.WriteLine("Run game in AUTO mode? (y/n)");
+            var choice = Console.ReadKey(true);
+            var game = new Game();
+            game.Run(choice.Key == ConsoleKey.Y);
         }
     }
 }

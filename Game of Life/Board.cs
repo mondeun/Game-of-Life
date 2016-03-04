@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game_of_Life
 {
     class Board
     {
+        /// <summary>
+        /// Handle states of each cell
+        /// </summary>
         public enum State
         {
-            Dead = 0,
-            Dying = 1,
-            Alive = 2,
-            Reborn = 3
-        };
+            Dead,
+            Dying,
+            Alive,
+            Reborn
+        }
 
         private State[,] _cell;
-        private State[,] _lastCellFrame;
-        private readonly Random _rand;
+        private Random _rand;
 
         /// <summary>
         /// Get board width
@@ -34,27 +31,8 @@ namespace Game_of_Life
         public Board()
         {
             _cell = new State[Width, Height];
-            _lastCellFrame = new State[Width, Height];
             _rand = new Random();
             Shuffle();
-        }
-
-        /// <summary>
-        /// Shuffle around the cells
-        /// </summary>
-        public void Shuffle()
-        {
-            for (int y = 0; y < Height; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    int tmp = _rand.Next(0, 2);
-                    if(tmp == 0)
-                        _cell[x, y] = State.Dead;
-                    else
-                        _cell[x,y] = State.Alive;
-                }
-            }
         }
 
         /// <summary>
@@ -77,12 +55,9 @@ namespace Game_of_Life
                         if (neighbours == 2 || neighbours == 3)
                             tmpCells[x, y] = State.Alive;
                     }
-                    else
+                    else // Dead or dying state
                     {
-                        if (neighbours == 3)
-                            tmpCells[x, y] = State.Reborn;
-                        else
-                            tmpCells[x,y]=State.Dead;
+                        tmpCells[x, y] = neighbours == 3 ? State.Reborn : State.Dead;
                     }
                 }
             }
@@ -98,13 +73,29 @@ namespace Game_of_Life
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    var piece = GetCharacterRepresentation(_cell[x, y]);
                     Console.ForegroundColor = GetColorRepresentation(_cell[x, y]);
-                    Console.Write(piece);
+                    Console.Write(GetCharacterRepresentation(_cell[x, y]));
                 }
                 Console.Write("\n");
             }
             Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Shuffle around the cells
+        /// </summary>
+        private void Shuffle()
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    if (_rand.Next(0, 2) == 0)
+                        _cell[x, y] = State.Dead;
+                    else
+                        _cell[x, y] = State.Alive;
+                }
+            }
         }
 
         /// <summary>
@@ -172,24 +163,19 @@ namespace Game_of_Life
             {
                 for (int j = -1; j < 2; j++)
                 {
-                    // Temporary values to test against to see if they are legit
                     var dx = x + i;
                     var dy = y + j;
 
-                    // Check bounds
+                    // Continue to next iteration if invalid bounds were found
                     if (dx < 0 || dx >= Width || dy < 0 || dy >= Height)
                         continue;
 
                     // Checks all neighbours without checking itself
                     if (dx != x || dy != y)
                     {
-                        // Add up if cell is alive
-                        if (_cell[dx, dy] == State.Alive)
+                        // Add up if cell is alive or reborn
+                        if (_cell[dx, dy] == State.Alive || _cell[dx, dy] == State.Reborn)
                             neighbours++;
-                        else if (_cell[dx, dy] == State.Reborn)
-                        {
-                            neighbours++;
-                        }
                     }
                 }
             }

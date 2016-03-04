@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Game_of_Life
 {
@@ -19,13 +15,12 @@ namespace Game_of_Life
         }
 
         /// <summary>
-        /// Update and draw the game
+        /// The game loop which updates and draw the game
         /// </summary>
-        public void Run()
+        /// <param name="auto">If to set next frame automatically or not</param>
+        public void Run(bool auto)
         {
-            bool run = true;
-
-            while (run)
+            while (true)
             {
                 Console.Clear();
 
@@ -34,8 +29,11 @@ namespace Game_of_Life
                 Console.WriteLine($"Frame: {_frame} : Width: {_board.Width} : Height: {_board.Height}\n");
                 _board.Draw();
 
-                //Console.ReadKey();
-                Thread.Sleep(250);
+
+                if (auto)
+                    Thread.Sleep(250);
+                else
+                    Console.ReadKey();
                 _frame++;
             }
         }
