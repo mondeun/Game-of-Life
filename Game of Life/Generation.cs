@@ -2,12 +2,12 @@
 
 namespace Game_of_Life
 {
-    class Board
+    class Generation
     {
         /// <summary>
         /// Handle states of each cell
         /// </summary>
-        public enum State
+        private enum State
         {
             Dead,
             Dying,
@@ -19,24 +19,30 @@ namespace Game_of_Life
         private Random _rand;
 
         /// <summary>
-        /// Get board width
+        /// Get the current tick
+        /// </summary>
+        public int Tick { get; private set; }
+
+        /// <summary>
+        /// Get field width
         /// </summary>
         public int Width => 45;
 
         /// <summary>
-        /// Get board height
+        /// Get field height
         /// </summary>
         public int Height => 22;
 
-        public Board()
+        public Generation()
         {
             _cell = new State[Width, Height];
             _rand = new Random();
+            Tick = 0;
             Shuffle();
         }
 
         /// <summary>
-        /// Update the board and apply rules to the cells
+        /// Update the cells and apply rules to them
         /// </summary>
         public void Update()
         {
@@ -62,10 +68,11 @@ namespace Game_of_Life
                 }
             }
             _cell = tmpCells;
+            Tick++;
         }
 
         /// <summary>
-        /// Draw the board the console
+        /// Draw to the console
         /// </summary>
         public void Draw()
         {
@@ -143,7 +150,7 @@ namespace Game_of_Life
         }
 
         /// <summary>
-        /// Get the number of bordering neighbours that are in an alive state
+        /// Get the number of bordering neighbours that are in an alive or reborn state
         /// </summary>
         /// <param name="x">X position</param>
         /// <param name="y">Y Position</param>

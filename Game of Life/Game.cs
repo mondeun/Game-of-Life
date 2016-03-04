@@ -5,13 +5,11 @@ namespace Game_of_Life
 {
     class Game
     {
-        private Board _board;
-        private int _frame;
+        private Generation _generation;
 
         public Game()
         {
-            _board = new Board();
-            _frame = 1;
+            _generation = new Generation();
         }
 
         /// <summary>
@@ -24,17 +22,16 @@ namespace Game_of_Life
             {
                 Console.Clear();
 
-                _board.Update();
+                _generation.Update();
 
-                Console.WriteLine($"Frame: {_frame} : Width: {_board.Width} : Height: {_board.Height}\n");
-                _board.Draw();
+                Console.WriteLine($"Tick: {_generation.Tick} : Width: {_generation.Width} : Height: {_generation.Height}\n");
+                _generation.Draw();
 
 
                 if (auto)
                     Thread.Sleep(250);
                 else
                     Console.ReadKey();
-                _frame++;
             }
         }
     }
