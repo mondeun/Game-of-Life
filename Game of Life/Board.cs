@@ -12,7 +12,9 @@ namespace Game_of_Life
         public enum State
         {
             Dead = 0,
-            Alive = 1
+            Dying = 1,
+            Alive = 2,
+            Reborn = 3
         };
 
         private State[,] _cell;
@@ -60,7 +62,6 @@ namespace Game_of_Life
         /// </summary>
         public void Update()
         {
-            // TODO Add handling of deceased and born cells
             var tmpCells = (State[,])_cell.Clone();
 
             for (int y = 0; y < Height; y++)
@@ -69,17 +70,19 @@ namespace Game_of_Life
                 {
                     var neighbours = CountNeighbours(x, y);
 
-                    if (tmpCells[x, y] == State.Alive)
+                    if (tmpCells[x, y] == State.Alive || tmpCells[x, y] == State.Reborn)
                     {
                         if (neighbours < 2 || neighbours > 3)
-                            tmpCells[x, y] = State.Dead;
+                            tmpCells[x, y] = State.Dying;
                         if (neighbours == 2 || neighbours == 3)
                             tmpCells[x, y] = State.Alive;
                     }
                     else
                     {
                         if (neighbours == 3)
-                            tmpCells[x, y] = State.Alive;
+                            tmpCells[x, y] = State.Reborn;
+                        else
+                            tmpCells[x,y]=State.Dead;
                     }
                 }
             }
@@ -96,8 +99,7 @@ namespace Game_of_Life
                 for (int x = 0; x < Width; x++)
                 {
                     var piece = GetCharacterRepresentation(_cell[x, y]);
-                    if(piece == '#')
-                        Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = GetColorRepresentation(_cell[x, y]);
                     Console.Write(piece);
                 }
                 Console.Write("\n");
@@ -116,10 +118,36 @@ namespace Game_of_Life
             {
                 case State.Dead:
                     return ' ';
+                case State.Dying:
+                    return '#';
                 case State.Alive:
+                    return '#';
+                case State.Reborn:
                     return '#';
                 default:
                     return ' ';
+            }
+        }
+
+        /// <summary>
+        /// Translate a state to a character
+        /// </summary>
+        /// <param name="state">State to translate</param>
+        /// <returns>Color representation of the state</returns>
+        private ConsoleColor GetColorRepresentation(State state)
+        {
+            switch (state)
+            {
+                case State.Dead:
+                    return ConsoleColor.Black;
+                case State.Dying:
+                    return ConsoleColor.Red;
+                case State.Alive:
+                    return ConsoleColor.Green;
+                case State.Reborn:
+                    return ConsoleColor.DarkGreen;
+                default:
+                    return ConsoleColor.White;
             }
         }
 
@@ -156,8 +184,12 @@ namespace Game_of_Life
                     if (dx != x || dy != y)
                     {
                         // Add up if cell is alive
-                        if (_cell[dx, dy] > 0)
+                        if (_cell[dx, dy] == State.Alive)
                             neighbours++;
+                        else if (_cell[dx, dy] == State.Reborn)
+                        {
+                            neighbours++;
+                        }
                     }
                 }
             }
