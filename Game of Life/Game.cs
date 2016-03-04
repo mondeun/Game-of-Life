@@ -31,11 +31,11 @@ namespace Game_of_Life
 
                 _board.Update();
 
-                Console.WriteLine($"Frame: {_frame}\n");
+                Console.WriteLine($"Frame: {_frame} : Width: {_board.Width} : Height: {_board.Height}\n");
                 _board.Draw();
 
                 //Console.ReadKey();
-                Thread.Sleep(100);
+                Thread.Sleep(250);
                 _frame++;
             }
         }

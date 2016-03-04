@@ -22,25 +22,25 @@ namespace Game_of_Life
         /// <summary>
         /// Get board width
         /// </summary>
-        public int Width => 40;
+        public int Width => 45;
 
         /// <summary>
         /// Get board height
         /// </summary>
-        public int Height => 20;
+        public int Height => 22;
 
         public Board()
         {
             _cell = new State[Width, Height];
             _lastCellFrame = new State[Width, Height];
             _rand = new Random();
-            Initialize();
+            Shuffle();
         }
 
         /// <summary>
-        /// 
+        /// Shuffle around the cells
         /// </summary>
-        public void Initialize()
+        public void Shuffle()
         {
             for (int y = 0; y < Height; y++)
             {
@@ -71,9 +71,7 @@ namespace Game_of_Life
 
                     if (tmpCells[x, y] == State.Alive)
                     {
-                        if (neighbours < 2)
-                            tmpCells[x, y] = State.Dead;
-                        else if(neighbours > 3)
+                        if (neighbours < 2 || neighbours > 3)
                             tmpCells[x, y] = State.Dead;
                         if (neighbours == 2 || neighbours == 3)
                             tmpCells[x, y] = State.Alive;
@@ -151,16 +149,15 @@ namespace Game_of_Life
                     var dy = y + j;
 
                     // Check bounds
-                    if (dx >= 0 && dx < Width &&
-                        dy >= 0 && dy < Height)
+                    if (dx < 0 || dx >= Width || dy < 0 || dy >= Height)
+                        continue;
+
+                    // Checks all neighbours without checking itself
+                    if (dx != x || dy != y)
                     {
-                        // Checks all neighbours without checking itself
-                        if (dx != x || dy != y)
-                        {
-                            // Add up if cell is alive
-                            if (_cell[dx, dy] > 0)
-                                neighbours++;
-                        }
+                        // Add up if cell is alive
+                        if (_cell[dx, dy] > 0)
+                            neighbours++;
                     }
                 }
             }
